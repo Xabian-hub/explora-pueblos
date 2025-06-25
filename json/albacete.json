@@ -10,7 +10,10 @@
       "Románico"
     ],
     "correct": 2,
-    "coords": { "lat": 38.9941, "lng": -1.8583 }
+    "coords": {
+      "lat": 38.99567753072308,
+      "lng": -1.8559652566909792
+    }
   },
   {
     "title": "Plaza del Altozano",
@@ -23,7 +26,10 @@
       "La torre del reloj"
     ],
     "correct": 2,
-    "coords": { "lat": 38.9939, "lng": -1.8566 }
+    "coords": {
+      "lat": 38.99482284151322,
+      "lng": -1.854372024536133
+    }
   },
   {
     "title": "Parque Abelardo Sánchez",
@@ -36,7 +42,10 @@
       "Parque Municipal"
     ],
     "correct": 1,
-    "coords": { "lat": 38.9967, "lng": -1.8550 }
+    "coords": {
+      "lat": 38.986834125222835,
+      "lng": -1.8567752838134768
+    }
   },
   {
     "title": "Museo de la Cuchillería",
@@ -49,20 +58,10 @@
       "Pinturas"
     ],
     "correct": 3,
-    "coords": { "lat": 38.9936, "lng": -1.8560 }
-  },
-  {
-    "title": "Molino del Hortelano",
-    "description": "Antiguo molino harinero restaurado",
-    "question": "¿Qué tipo de molino es?",
-    "answers": [
-      "Molino de viento",
-      "Molino harinero",
-      "Molino aceitero",
-      "Molino de agua"
-    ],
-    "correct": 2,
-    "coords": { "lat": 38.9970, "lng": -1.8552 }
+    "coords": {
+      "lat": 38.996298737378076,
+      "lng": -1.8562871217727663
+    }
   },
   {
     "title": "Teatro Circo",
@@ -75,7 +74,10 @@
       "1905"
     ],
     "correct": 2,
-    "coords": { "lat": 38.9954, "lng": -1.8568 }
+    "coords": {
+      "lat": 38.99581928305746,
+      "lng": -1.8540930747985842
+    }
   },
   {
     "title": "Casa Perona",
@@ -88,7 +90,10 @@
       "Escuela"
     ],
     "correct": 1,
-    "coords": { "lat": 38.9940, "lng": -1.8549 }
+    "coords": {
+      "lat": 38.9953565023279,
+      "lng": -1.8585991859436037
+    }
   },
   {
     "title": "Pasaje Lodares",
@@ -101,7 +106,10 @@
       "Gótico"
     ],
     "correct": 1,
-    "coords": { "lat": 38.9942, "lng": -1.8579 }
+    "coords": {
+      "lat": 38.993251020263,
+      "lng": -1.8557828664779665
+    }
   },
   {
     "title": "Museo Municipal (Casa de la Cultura)",
@@ -114,7 +122,10 @@
       "Centro de Arte"
     ],
     "correct": 2,
-    "coords": { "lat": 38.9931, "lng": -1.8589 }
+    "coords": {
+      "lat": 38.995110518546106,
+      "lng": -1.8537336587905886
+    }
   },
   {
     "title": "Estación de Tren Los Llanos",
@@ -127,7 +138,10 @@
       "1872"
     ],
     "correct": 3,
-    "coords": { "lat": 38.9910, "lng": -1.8567 }
+    "coords": {
+      "lat": 38.999342154262536,
+      "lng": -1.8481492996215823
+    }
   },
   {
     "title": "Universidad de Castilla-La Mancha",
@@ -140,7 +154,10 @@
       "Universidad Complutense"
     ],
     "correct": 3,
-    "coords": { "lat": 38.9937, "lng": -1.8481 }
+    "coords": {
+      "lat": 38.97882782653669,
+      "lng": -1.8579769134521487
+    }
   },
   {
     "title": "Recinto Ferial de la Feria",
@@ -153,6 +170,9 @@
       "Octubre"
     ],
     "correct": 3,
-    "coords": { "lat": 38.9895, "lng": -1.8267 }
+    "coords": {
+      "lat": 38.99669063675777,
+      "lng": -1.8660449981689455
+    }
   }
 ]
