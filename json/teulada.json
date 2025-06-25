@@ -1,0 +1,66 @@
+[
+  {
+    "title": "Castillo de Moraira",
+    "description": "Fortaleza histórica en Moraira",
+    "question": "¿De qué siglo data su construcción principal?",
+    "answers": [
+      "Siglo XVI",
+      "Siglo XVII",
+      "Siglo XVIII",
+      "Siglo XIX"
+    ],
+    "correct": 1,
+    "coords": {
+      "lat": 38.6762,
+      "lng": 0.1180
+    }
+  },
+  {
+    "title": "Playa de l'Andrago",
+    "description": "Playa tranquila y familiar",
+    "question": "¿Cómo se accede principalmente a la playa?",
+    "answers": [
+      "Camino a pie",
+      "Teleférico",
+      "Carretera",
+      "Tren"
+    ],
+    "correct": 3,
+    "coords": {
+      "lat": 38.6808,
+      "lng": 0.1278
+    }
+  },
+  {
+    "title": "Iglesia de Santa Catalina",
+    "description": "Iglesia parroquial de Moraira",
+    "question": "¿Cuál es la patrona del templo?",
+    "answers": [
+      "Santa Catalina",
+      "Santa María",
+      "Santa Ana",
+      "Santa Bárbara"
+    ],
+    "correct": 1,
+    "coords": {
+      "lat": 38.6420,
+      "lng": 0.1365
+    }
+  },
+  {
+    "title": "Torre de Cap d'Or",
+    "description": "Torre vigía del siglo XVI",
+    "question": "¿Para qué servía originalmente?",
+    "answers": [
+      "Residencia",
+      "Almacén",
+      "Defensa costera",
+      "Iglesia"
+    ],
+    "correct": 3,
+    "coords": {
+      "lat": 38.6870,
+      "lng": 0.1370
+    }
+  }
+]

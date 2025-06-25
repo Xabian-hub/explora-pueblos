@@ -1,177 +1,229 @@
-// renderer.js — Editor de Pueblos con marcadores arrastrables y persistencia
+// renderer.js
 
-// Inicialización de Leaflet
-document.addEventListener('DOMContentLoaded', () => {
-  const map = L.map('map').setView([38.7939, 0.1656], 13);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors'
-  }).addTo(map);
-  // Forzamos un redraw tras layout
-  setTimeout(() => map.invalidateSize(), 300);
+// ─── Inicialización del mapa Leaflet ─────────────────────────────────────────
+const map = L.map('map').setView([38.7939, 0.1656], 13);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; OpenStreetMap contributors'
+}).addTo(map);
+// Forzar redraw en caso de resize inicial
+setTimeout(() => map.invalidateSize(), 300);
 
-  // Variables globales
-  let pueblo = '';
-  let markers = [];
-  let leafletMarkers = [];
-  let editIndex = -1;
+// ─── Estado global ───────────────────────────────────────────────────────────
+let pueblo = '';
+let markers = [];
+let leafletMarkers = [];
+let editIndex = -1;
 
-  // IPC con Electron
-  async function loadPueblo(name) {
-    markers = await window.electronAPI.loadJSON(name);
+// ─── Referencias al DOM ──────────────────────────────────────────────────────
+const puebloSelect  = document.getElementById('pueblo-select');
+const loadBtn       = document.getElementById('load-pueblo');
+const addBtn        = document.getElementById('add-marker');
+const exportBtn     = document.getElementById('export-btn');
+const backdrop      = document.getElementById('modal-backdrop');
+const modal         = document.getElementById('form-modal');
+const formSave      = document.getElementById('form-save');
+const formCancel    = document.getElementById('form-cancel');
+
+// Campos del formulario
+const formFields = {
+  title:       document.getElementById('form-title'),
+  description: document.getElementById('form-description'),
+  question:    document.getElementById('form-question'),
+  answer1:     document.getElementById('form-answer1'),
+  answer2:     document.getElementById('form-answer2'),
+  answer3:     document.getElementById('form-answer3'),
+  answer4:     document.getElementById('form-answer4'),
+  correct:     document.getElementById('form-correct'),
+  lat:         document.getElementById('form-lat'),
+  lng:         document.getElementById('form-lng'),
+};
+
+// ─── Poblar dinámicamente el selector de pueblos ────────────────────────────
+async function populatePueblos() {
+  const files = await window.electronAPI.listJSONFiles();
+  puebloSelect.innerHTML = '<option value="">-- Selecciona un pueblo --</option>';
+  files.forEach(f => {
+    const name = f.replace('.json','');
+    const opt  = document.createElement('option');
+    opt.value   = name;
+    opt.text    = name;
+    puebloSelect.appendChild(opt);
+  });
+}
+populatePueblos();
+
+// ─── Cargar / Crear pueblo ──────────────────────────────────────────────────
+loadBtn.addEventListener('click', async () => {
+  const sel = puebloSelect.value.trim();
+  if (!sel) return alert('Selecciona un pueblo');
+  pueblo   = sel;
+  markers  = await window.electronAPI.loadJSON(pueblo) || [];
+  updateList();
+  renderMarkers();
+});
+
+// ─── Añadir nuevo marcador con click en el mapa ─────────────────────────────
+addBtn.addEventListener('click', () => {
+  map.once('click', e => {
+    editIndex = -1;
+    showForm(e.latlng);
+  });
+});
+
+// ─── Exportar JSON y refrescar listado ──────────────────────────────────────
+exportBtn.addEventListener('click', async () => {
+  if (!pueblo) return alert('Carga primero un pueblo');
+  await window.electronAPI.saveJSON(pueblo, markers);
+  await populatePueblos();
+  alert(`Guardado ${pueblo}.json`);
+});
+
+// ─── Función para mostrar el modal de formulario ────────────────────────────
+function showForm(latlng) {
+  // Desactivar interacciones del mapa
+  map.dragging.disable();
+  map.scrollWheelZoom.disable();
+  document.getElementById('map').style.pointerEvents = 'none';
+
+  // Mostrar backdrop y formulario
+  backdrop.style.display = 'block';
+  modal.style.display    = 'block';
+
+  // Prefill si es edición
+  if (editIndex >= 0) {
+    const m = markers[editIndex];
+    formFields.title.value       = m.title;
+    formFields.description.value = m.description;
+    formFields.question.value    = m.question;
+    formFields.answer1.value     = m.answers[0];
+    formFields.answer2.value     = m.answers[1];
+    formFields.answer3.value     = m.answers[2];
+    formFields.answer4.value     = m.answers[3];
+    formFields.correct.value     = m.correct;
+    formFields.lat.value         = m.coords.lat;
+    formFields.lng.value         = m.coords.lng;
+  } else {
+    // Limpiar campos
+    formFields.title.value = '';
+    formFields.description.value = '';
+    formFields.question.value = '';
+    formFields.answer1.value = '';
+    formFields.answer2.value = '';
+    formFields.answer3.value = '';
+    formFields.answer4.value = '';
+    formFields.correct.value = '';
+    formFields.lat.value = latlng.lat;
+    formFields.lng.value = latlng.lng;
   }
-  async function savePueblo(name, data) {
-    await window.electronAPI.saveJSON(name, data);
-  }
+}
 
-  // Cargar o crear pueblo
-  document.getElementById('load-pueblo').onclick = async () => {
-    const sel = document.getElementById('pueblo-input')
-                       ? document.getElementById('pueblo-input').value.trim()
-                       : document.getElementById('pueblo-select').value.trim();
-    if (!sel) return alert('Pon nombre de pueblo');
-    pueblo = sel;
-    await loadPueblo(pueblo);
-    updateList();
-    renderMarkers();
-  };
-
-  // Añadir marcador por click en el mapa
-  document.getElementById('add-marker').onclick = () => {
-    map.once('click', e => {
-      editIndex = -1;
-      showForm(e.latlng);
-    });
-  };
-
-  // Exportar JSON
-  document.getElementById('export-btn').onclick = async () => {
-    if (!pueblo) return alert('Carga primero el pueblo');
-    await savePueblo(pueblo, markers);
-    alert(`Guardado ${pueblo}.json`);
-  };
-
-  // Mostrar formulario (creación o edición)
-  function showForm(latlng) {
-    // Desactivar interacciones del mapa
-    map.dragging.disable();
-    map.scrollWheelZoom.disable();
-    document.getElementById('map').style.pointerEvents = 'none';
-
-    // Mostrar backdrop y modal
-    document.getElementById('modal-backdrop').style.display = 'block';
-    const modal = document.getElementById('form-modal');
-    modal.style.display = 'block';
-
-    // Prefill si es edición
-    if (editIndex >= 0) {
-      const m = markers[editIndex];
-      document.getElementById('form-title').value = m.title;
-      document.getElementById('form-description').value = m.description;
-      document.getElementById('form-question').value = m.question;
-      [1,2,3,4].forEach(i => {
-        document.getElementById(`form-answer${i}`).value = m.answers[i-1];
-      });
-      document.getElementById('form-correct').value = m.correct;
-      document.getElementById('form-lat').value = m.coords.lat;
-      document.getElementById('form-lng').value = m.coords.lng;
-    } else {
-      // Limpia campos
-      ['title','description','question','answer1','answer2','answer3','answer4','correct','lat','lng']
-        .forEach(id => document.getElementById(`form-${id}`).value = '');
-      document.getElementById('form-lat').value = latlng.lat;
-      document.getElementById('form-lng').value = latlng.lng;
+// ─── Guardar datos del formulario ───────────────────────────────────────────
+formSave.addEventListener('click', () => {
+  const data = {
+    title:       formFields.title.value,
+    description: formFields.description.value,
+    question:    formFields.question.value,
+    answers: [
+      formFields.answer1.value,
+      formFields.answer2.value,
+      formFields.answer3.value,
+      formFields.answer4.value
+    ],
+    correct: parseInt(formFields.correct.value, 10),
+    coords: {
+      lat: parseFloat(formFields.lat.value),
+      lng: parseFloat(formFields.lng.value)
     }
-  }
+  };
 
-  // Guardar formulario
-  document.getElementById('form-save').onclick = async () => {
-    const data = {
-      title: document.getElementById('form-title').value,
-      description: document.getElementById('form-description').value,
-      question: document.getElementById('form-question').value,
-      answers: [
-        document.getElementById('form-answer1').value,
-        document.getElementById('form-answer2').value,
-        document.getElementById('form-answer3').value,
-        document.getElementById('form-answer4').value
-      ],
-      correct: parseInt(document.getElementById('form-correct').value),
-      coords: {
-        lat: parseFloat(document.getElementById('form-lat').value),
-        lng: parseFloat(document.getElementById('form-lng').value)
+  if (editIndex >= 0) markers[editIndex] = data;
+  else markers.push(data);
+
+  // Cerrar modal y reactivar mapa
+  modal.style.display    = 'none';
+  backdrop.style.display = 'none';
+  map.dragging.enable();
+  map.scrollWheelZoom.enable();
+  document.getElementById('map').style.pointerEvents = 'auto';
+
+  updateList();
+  renderMarkers();
+});
+
+// ─── Cancelar formulario ────────────────────────────────────────────────────
+formCancel.addEventListener('click', () => {
+  modal.style.display    = 'none';
+  backdrop.style.display = 'none';
+  map.dragging.enable();
+  map.scrollWheelZoom.enable();
+  document.getElementById('map').style.pointerEvents = 'auto';
+});
+
+// ─── Actualizar la lista lateral de marcadores ──────────────────────────────
+function updateList() {
+  const list = document.getElementById('marker-list');
+  list.innerHTML = '';
+  markers.forEach((m, i) => {
+    const entry = document.createElement('div');
+    entry.className = 'marker-entry';
+    entry.innerHTML = `<strong>${m.title}</strong><br>${m.description}`;
+    // Botones editar / eliminar
+    const btnEdit = document.createElement('button');
+    btnEdit.textContent = '✏️';
+    btnEdit.className   = 'btn-small';
+    btnEdit.onclick     = () => { editIndex = i; showForm(markers[i].coords); };
+
+    const btnDel  = document.createElement('button');
+    btnDel.textContent = '🗑️';
+    btnDel.className   = 'btn-small';
+    btnDel.onclick     = () => {
+      if (confirm('Borrar este marcador?')) {
+        markers.splice(i,1);
+        updateList();
+        renderMarkers();
       }
     };
 
-    if (editIndex >= 0) markers[editIndex] = data;
-    else markers.push(data);
+    entry.appendChild(btnEdit);
+    entry.appendChild(btnDel);
+    list.appendChild(entry);
+  });
+}
 
-    // Ocultar modal y backdrop
-    document.getElementById('form-modal').style.display = 'none';
-    document.getElementById('modal-backdrop').style.display = 'none';
-    map.dragging.enable();
-    map.scrollWheelZoom.enable();
-    document.getElementById('map').style.pointerEvents = '';
+// ─── Renderizar todos los marcadores en el mapa ─────────────────────────────
+function renderMarkers() {
+  // Limpiar viejos
+  leafletMarkers.forEach(m => map.removeLayer(m));
+  leafletMarkers = markers.map((m, i) => {
+    const marker = L.marker([m.coords.lat, m.coords.lng], { draggable: true })
+      .addTo(map)
+      .bindPopup(`<b>${m.title}</b><br>${m.description}`);
 
-    // Actualizar lista y marcadores
-    updateList();
-    renderMarkers();
-  };
-
-  // Cancelar formulario
-  document.getElementById('form-cancel').onclick = () => {
-    document.getElementById('form-modal').style.display = 'none';
-    document.getElementById('modal-backdrop').style.display = 'none';
-    map.dragging.enable();
-    map.scrollWheelZoom.enable();
-    document.getElementById('map').style.pointerEvents = '';
-  };
-
-  // Actualiza la lista lateral
-  function updateList() {
-    const list = document.getElementById('marker-list');
-    list.innerHTML = '';
-    markers.forEach((m,i) => {
-      const d = document.createElement('div');
-      d.className = 'marker-entry';
-      d.innerHTML = `<strong>${m.title}</strong><br>${m.description}`;
-      const btnEdit = document.createElement('button');
-      btnEdit.textContent = '✏️';
-      btnEdit.className = 'btn-small';
-      btnEdit.onclick = () => {
-        editIndex = i;
-        showForm(markers[i].coords);
-      };
-      const btnDel = document.createElement('button');
-      btnDel.textContent = '🗑️';
-      btnDel.className = 'btn-small';
-      btnDel.onclick = () => {
-        if (confirm('Borrar este marcador?')) {
-          markers.splice(i,1);
-          updateList();
-          renderMarkers();
-        }
-      };
-      d.append(btnEdit, btnDel);
-      list.appendChild(d);
+    // Al empezar drag, desactivar paneo del mapa
+    marker.on('dragstart', () => {
+      map.dragging.disable();
+      map.scrollWheelZoom.disable();
     });
+
+    // Al soltar, actualiza coords y guarda
+    marker.on('dragend', async e => {
+      const { lat, lng } = e.target.getLatLng();
+      markers[i].coords  = { lat, lng };
+      await window.electronAPI.saveJSON(pueblo, markers);
+      updateList();
+      map.dragging.enable();
+      map.scrollWheelZoom.enable();
+    });
+
+    return marker;
+  });
+
+  // Reajustar vista si hay marcadores
+  if (leafletMarkers.length) {
+    const group = new L.featureGroup(leafletMarkers);
+    map.fitBounds(group.getBounds().pad(0.2));
   }
 
-  // Renderiza los marcadores y los hace arrastrables
-  function renderMarkers() {
-    leafletMarkers.forEach(m => map.removeLayer(m));
-    leafletMarkers = markers.map((m,i) => {
-      const marker = L.marker([m.coords.lat, m.coords.lng], { draggable: true })
-        .addTo(map)
-        .bindPopup(`<b>${m.title}</b><br>${m.description}`);
-      // al soltar, actualiza coords y guarda JSON
-      marker.on('dragend', async e => {
-        const { lat, lng } = e.target.getLatLng();
-        markers[i].coords = { lat, lng };
-        updateList();
-        if (pueblo) await savePueblo(pueblo, markers);
-      });
-      return marker;
-    });
-    setTimeout(() => map.invalidateSize(), 200);
-  }
-});
+  // Asegurar tamaño correcto
+  setTimeout(() => map.invalidateSize(), 200);
+}

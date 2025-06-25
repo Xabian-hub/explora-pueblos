@@ -1,0 +1,66 @@
+[
+  {
+    "title": "Iglesia de San Martín",
+    "description": "Iglesia parroquial del municipio",
+    "question": "¿Cuál es su estilo arquitectónico?",
+    "answers": [
+      "Gótico",
+      "Renacentista",
+      "Barroco",
+      "Neoclásico"
+    ],
+    "correct": 3,
+    "coords": {
+      "lat": 38.7720,
+      "lng": -0.0510
+    }
+  },
+  {
+    "title": "Fuente de Xaló",
+    "description": "Fuente histórica de la plaza central",
+    "question": "¿De qué material está hecha principalmente?",
+    "answers": [
+      "Mármol",
+      "Hierro",
+      "Piedra",
+      "Ladrillo"
+    ],
+    "correct": 3,
+    "coords": {
+      "lat": 38.7731,
+      "lng": -0.0452
+    }
+  },
+  {
+    "title": "Mirador de la Sierra de Bernia",
+    "description": "Vistas panorámicas de la sierra",
+    "question": "¿Qué pico ves al fondo?",
+    "answers": [
+      "Montgó",
+      "Aitana",
+      "Bernia",
+      "Peñón de Ifach"
+    ],
+    "correct": 3,
+    "coords": {
+      "lat": 38.7375,
+      "lng": -0.0650
+    }
+  },
+  {
+    "title": "Bodega Moscatel",
+    "description": "Bodega local de vinos Moscatel",
+    "question": "¿Qué uva es típica de la zona?",
+    "answers": [
+      "Moscatel",
+      "Tempranillo",
+      "Garnacha",
+      "Merlot"
+    ],
+    "correct": 1,
+    "coords": {
+      "lat": 38.7658,
+      "lng": -0.0551
+    }
+  }
+]

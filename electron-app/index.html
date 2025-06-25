@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Editor de Pueblos</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
   <style>
-    /* RESET y layout flex */
     html, body {
       margin: 0; padding: 0;
       width: 100%; height: 100%;
@@ -15,8 +13,6 @@
     body {
       display: flex; flex-direction: row;
     }
-
-    /* Sidebar */
     #sidebar {
       flex: 0 0 320px;
       background: #f0f0f0;
@@ -24,53 +20,40 @@
       overflow-y: auto;
     }
     label, select, input, button {
-      display: block;
-      width: 100%;
-      margin: 5px 0;
+      display: block; width: 100%; margin: 5px 0;
     }
     .marker-entry {
-      background: #fff;
-      border: 1px solid #ccc;
-      margin-bottom: 5px;
-      padding: 5px;
+      background: #fff; border: 1px solid #ccc;
+      margin-bottom: 5px; padding: 5px;
     }
     .btn-small {
       margin: 2px; padding: 2px 5px; font-size: 0.9em;
     }
-
-    /* Mapa */
     #map {
-      flex: 1 1 auto;
-      min-width: 0;
-      height: 100%;
+      flex: 1 1 auto; min-width: 0; height: 100%;
     }
-
-    /* Backdrop para modal */
+    /* Backdrop */
     #modal-backdrop {
       display: none;
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(0,0,0,0.4);
       z-index: 1500;
     }
-    /* Modal formulario */
+    /* Modal */
     #form-modal {
       display: none;
       position: fixed;
       top: 10%; left: 50%;
       transform: translateX(-50%);
       width: 80%; max-width: 400px;
-      background: #fff;
-      border: 1px solid #333;
-      padding: 15px;
-      z-index: 2000;
+      background: #fff; border: 1px solid #333;
+      padding: 15px; z-index: 2000;
       pointer-events: auto;
     }
     #form-modal input,
     #form-modal textarea,
     #form-modal button {
-      width: 100%;
-      margin: 5px 0;
+      width: 100%; margin: 5px 0;
     }
   </style>
 </head>
@@ -79,20 +62,11 @@
   <div id="sidebar">
     <h3>Editor de Pueblos</h3>
 
-    <label for="pueblo-input">Pueblo:</label>
-<input 
-  type="text" 
-  id="pueblo-input" 
-  list="pueblos-list" 
-  placeholder="Escribe o elige un pueblo" 
-/>
-<datalist id="pueblos-list">
-  <option value="javea"></option>
-  <option value="denia"></option>
-  <option value="teulada"></option>
-</datalist>
-<button id="load-pueblo">Cargar/Crear</button>
-
+    <label for="pueblo-select">Elige pueblo:</label>
+    <select id="pueblo-select">
+      <option value="">-- Selecciona un pueblo --</option>
+    </select>
+    <button id="load-pueblo">Cargar/Crear</button>
     <hr>
 
     <div id="marker-list"></div>
@@ -102,38 +76,27 @@
 
   <div id="map"></div>
 
-  <!-- Backdrop que bloquea el mapa -->
+  <!-- Backdrop -->
   <div id="modal-backdrop"></div>
 
-  <!-- Modal con formulario de marcador -->
+  <!-- Modal Formulario -->
   <div id="form-modal">
     <h2>Nuevo marcador</h2>
-    <label>Título:</label>
-    <input type="text" id="form-title" />
-    <label>Descripción:</label>
-    <textarea id="form-description"></textarea>
-    <label>Pregunta:</label>
-    <input type="text" id="form-question" />
-    <label>Respuesta 1:</label>
-    <input type="text" id="form-answer1" />
-    <label>Respuesta 2:</label>
-    <input type="text" id="form-answer2" />
-    <label>Respuesta 3:</label>
-    <input type="text" id="form-answer3" />
-    <label>Respuesta 4:</label>
-    <input type="text" id="form-answer4" />
-    <label>Correcta (1-4):</label>
-    <input type="number" id="form-correct" min="1" max="4" />
-    <label>Latitud (manual):</label>
-    <input type="number" step="any" id="form-lat" />
-    <label>Longitud (manual):</label>
-    <input type="number" step="any" id="form-lng" />
+    <label>Título:</label><input type="text" id="form-title">
+    <label>Descripción:</label><textarea id="form-description"></textarea>
+    <label>Pregunta:</label><input type="text" id="form-question">
+    <label>Respuesta 1:</label><input type="text" id="form-answer1">
+    <label>Respuesta 2:</label><input type="text" id="form-answer2">
+    <label>Respuesta 3:</label><input type="text" id="form-answer3">
+    <label>Respuesta 4:</label><input type="text" id="form-answer4">
+    <label>Correcta (1-4):</label><input type="number" id="form-correct" min="1" max="4">
+    <label>Latitud (manual):</label><input type="number" step="any" id="form-lat">
+    <label>Longitud (manual):</label><input type="number" step="any" id="form-lng">
     <button id="form-save">Guardar</button>
     <button id="form-cancel">Cancelar</button>
   </div>
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="renderer.js"></script>
-
 </body>
 </html>

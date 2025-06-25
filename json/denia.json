@@ -1,0 +1,66 @@
+[
+  {
+    "title": "Castell de Dénia",
+    "description": "Fortaleza que domina la ciudad",
+    "question": "¿En qué siglo se construyó principalmente el castillo?",
+    "answers": [
+      "Siglo XII",
+      "Siglo XIII",
+      "Siglo XIV",
+      "Siglo XV"
+    ],
+    "correct": 2,
+    "coords": {
+      "lat": 38.8404,
+      "lng": 0.1060
+    }
+  },
+  {
+    "title": "Les Rotes",
+    "description": "Zona de calas y acantilados",
+    "question": "¿Qué actividad es popular en Les Rotes?",
+    "answers": [
+      "Esquí",
+      "Snorkel",
+      "Surf",
+      "Senderismo"
+    ],
+    "correct": 2,
+    "coords": {
+      "lat": 38.8450,
+      "lng": 0.1015
+    }
+  },
+  {
+    "title": "Puerto de Dénia",
+    "description": "Puerto pesquero y deportivo",
+    "question": "¿Qué plato típico se asocia con Dénia?",
+    "answers": [
+      "Paella",
+      "Suquet de peix",
+      "Gazpacho",
+      "Cocido"
+    ],
+    "correct": 2,
+    "coords": {
+      "lat": 38.8437,
+      "lng": 0.1055
+    }
+  },
+  {
+    "title": "Museu del Joguet",
+    "description": "Museo de juguetes antiguos",
+    "question": "¿Cuál es la temática principal del museo?",
+    "answers": [
+      "Arte moderno",
+      "Juguetes",
+      "Historia militar",
+      "Ciencia"
+    ],
+    "correct": 2,
+    "coords": {
+      "lat": 38.8425,
+      "lng": 0.1068
+    }
+  }
+]
